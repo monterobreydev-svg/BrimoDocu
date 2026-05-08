@@ -1,4 +1,4 @@
-import { AppNavbar } from "@/components/layout/AppNavbar";
+import { DashboardHeader } from "@/components/layout/DashboardHeader";
 
 const stats = [
   { label: "Documents this month", value: "0" },
@@ -9,9 +9,9 @@ const stats = [
 export default function DashboardPage() {
   return (
     <>
-      <AppNavbar
+      <DashboardHeader
         title="Dashboard"
-        action={{ label: "+ New Document", href: "/documents" }}
+        action={{ label: "+ New Document", href: "/dashboard/documents" }}
       />
       <main className="flex-1 p-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -33,7 +33,7 @@ export default function DashboardPage() {
             </div>
             <p className="text-sm font-medium text-gray-700 mb-1">No documents yet</p>
             <p className="text-xs text-gray-400 mb-4">Generate your first invoice, contract, or report.</p>
-            <a href="/documents" className="text-sm font-semibold text-indigo-600 hover:underline">
+            <a href="/dashboard/documents" className="text-sm font-semibold text-indigo-600 hover:underline">
               Create your first document →
             </a>
           </div>

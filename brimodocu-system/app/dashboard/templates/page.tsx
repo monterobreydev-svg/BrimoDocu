@@ -1,4 +1,4 @@
-import { AppNavbar } from "@/components/layout/AppNavbar";
+import { DashboardHeader } from "@/components/layout/DashboardHeader";
 
 const placeholderTemplates = [
   { type: "invoice", label: "Invoice", description: "Bill clients for services or products." },
@@ -9,7 +9,7 @@ const placeholderTemplates = [
 export default function TemplatesPage() {
   return (
     <>
-      <AppNavbar title="Templates" />
+      <DashboardHeader title="Templates" />
       <main className="flex-1 p-6">
         <p className="text-sm text-gray-500 mb-6">Pick a template to start generating a document.</p>
 
@@ -17,7 +17,7 @@ export default function TemplatesPage() {
           {placeholderTemplates.map((t) => (
             <a
               key={t.type}
-              href={`/documents/new?type=${t.type}`}
+              href={`/dashboard/documents/new?type=${t.type}`}
               className="bg-white rounded-2xl border border-gray-100 p-6 hover:border-indigo-200 hover:shadow-md hover:-translate-y-0.5 transition-all group"
             >
               <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">

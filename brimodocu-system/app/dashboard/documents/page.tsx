@@ -1,11 +1,11 @@
-import { AppNavbar } from "@/components/layout/AppNavbar";
+import { DashboardHeader } from "@/components/layout/DashboardHeader";
 
 export default function DocumentsPage() {
   return (
     <>
-      <AppNavbar
+      <DashboardHeader
         title="Documents"
-        action={{ label: "+ New Document", href: "/documents/new" }}
+        action={{ label: "+ New Document", href: "/dashboard/documents/new" }}
       />
       <main className="flex-1 p-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
@@ -17,7 +17,7 @@ export default function DocumentsPage() {
             </div>
             <p className="text-sm font-medium text-gray-700 mb-1">No documents yet</p>
             <p className="text-xs text-gray-400 mb-4">Pick a template and generate your first document.</p>
-            <a href="/templates" className="text-sm font-semibold text-indigo-600 hover:underline">
+            <a href="/dashboard/templates" className="text-sm font-semibold text-indigo-600 hover:underline">
               Browse templates →
             </a>
           </div>

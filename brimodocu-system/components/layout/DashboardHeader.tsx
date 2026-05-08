@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 
-interface AppNavbarProps {
+interface DashboardHeaderProps {
   title: string;
   action?: {
     label: string;
@@ -8,7 +8,7 @@ interface AppNavbarProps {
   };
 }
 
-export function AppNavbar({ title, action }: AppNavbarProps) {
+export function DashboardHeader({ title, action }: DashboardHeaderProps) {
   return (
     <header className="h-16 border-b border-gray-100 bg-white flex items-center justify-between px-6 shrink-0">
       <h1 className="text-base font-bold text-gray-900">{title}</h1>

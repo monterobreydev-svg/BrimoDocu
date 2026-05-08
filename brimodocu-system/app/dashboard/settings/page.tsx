@@ -1,11 +1,11 @@
-import { AppNavbar } from "@/components/layout/AppNavbar";
+import { DashboardHeader } from "@/components/layout/DashboardHeader";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
 export default function SettingsPage() {
   return (
     <>
-      <AppNavbar title="Settings" />
+      <DashboardHeader title="Settings" />
       <main className="flex-1 p-6">
         <div className="max-w-lg space-y-6">
 

@@ -1,11 +1,11 @@
-import { AppNavbar } from "@/components/layout/AppNavbar";
+import { DashboardHeader } from "@/components/layout/DashboardHeader";
 
-export default async function DocumentPage(props: PageProps<"/(app)/documents/[id]">) {
+export default async function DocumentPage(props: PageProps<"/dashboard/documents/[id]">) {
   const { id } = await props.params;
 
   return (
     <>
-      <AppNavbar title={`Document #${id}`} />
+      <DashboardHeader title={`Document #${id}`} />
       <main className="flex-1 p-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-8 max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-widest text-indigo-500 mb-2">Document Editor</p>
