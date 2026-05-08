@@ -1,35 +1,32 @@
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/prisma";
 import { DashboardHeader } from "@/components/layout/DashboardHeader";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { SettingsForm } from "./SettingsForm";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const session = await auth();
+
+  let profile = null;
+  let businessName: string | null = null;
+
+  if (session?.user?.id) {
+    const [dbUser, bp] = await Promise.all([
+      db.user.findUnique({
+        where:  { id: session.user.id },
+        select: { businessName: true },
+      }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (db as any).businessProfile.findUnique({ where: { userId: session.user.id } }),
+    ]);
+    profile      = bp ?? null;
+    businessName = dbUser?.businessName ?? null;
+  }
+
   return (
     <>
       <DashboardHeader title="Settings" />
-      <main className="flex-1 p-6">
-        <div className="max-w-lg space-y-6">
-
-          <div className="bg-white rounded-2xl border border-gray-100 p-6">
-            <h2 className="text-sm font-bold text-gray-900 mb-5">Business Details</h2>
-            <form className="space-y-4">
-              <Input label="Business name" type="text" placeholder="Your Business Name" />
-              <Input label="Email" type="email" placeholder="you@example.com" />
-              <Input label="Phone" type="tel" placeholder="+63 912 345 6789" />
-              <Input label="Address" type="text" placeholder="123 Main St, City" />
-              <Button type="submit" size="sm">Save changes</Button>
-            </form>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-100 p-6">
-            <h2 className="text-sm font-bold text-gray-900 mb-5">Account</h2>
-            <form className="space-y-4">
-              <Input label="Your name" type="text" placeholder="Your Name" />
-              <Input label="New password" type="password" placeholder="Leave blank to keep current" />
-              <Button type="submit" size="sm">Update account</Button>
-            </form>
-          </div>
-
-        </div>
+      <main className="flex-1 overflow-y-auto" style={{ padding: 22, background: "#F4F6F9" }}>
+        <SettingsForm profile={profile} businessName={businessName} />
       </main>
     </>
   );

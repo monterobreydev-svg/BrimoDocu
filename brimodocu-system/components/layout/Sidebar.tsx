@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { signOut } from "next-auth/react";
 
 const mainNav = [
   {
@@ -30,16 +32,31 @@ const mainNav = [
       </svg>
     ),
   },
-];
-
-const quickCreate = [
-  { label: "Invoice",          badge: "INV", href: "/dashboard/templates" },
-  { label: "Service Contract", badge: "SC",  href: "/dashboard/templates" },
-  { label: "Business Report",  badge: "RPT", href: "/dashboard/templates" },
+  {
+    href: "/dashboard/clients",
+    label: "Clients",
+    icon: (
+      <svg className="w-[14px] h-[14px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    ),
+  },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <aside
@@ -54,8 +71,6 @@ export function Sidebar() {
 
       {/* Body */}
       <div className="flex-1 overflow-y-auto" style={{ padding: "10px 8px" }}>
-
-        {/* Main */}
         <div style={{ marginBottom: 18 }}>
           <div style={{ fontSize: 10, fontWeight: 600, color: "#94A3B8", textTransform: "uppercase", letterSpacing: ".08em", padding: "0 7px", marginBottom: 5 }}>
             Main
@@ -86,59 +101,74 @@ export function Sidebar() {
             );
           })}
         </div>
-
-        {/* Quick Create */}
-        <div>
-          <div style={{ fontSize: 10, fontWeight: 600, color: "#94A3B8", textTransform: "uppercase", letterSpacing: ".08em", padding: "0 7px", marginBottom: 5 }}>
-            Quick Create
-          </div>
-          {quickCreate.map((item) => (
-            <Link
-              key={item.badge}
-              href={item.href}
-              className="flex items-center transition-all hover:bg-[#F4F6F9] hover:text-[#0F172A]"
-              style={{
-                padding: "7px 9px",
-                borderRadius: 7,
-                fontSize: 12.5,
-                color: "#334155",
-                textDecoration: "none",
-                marginBottom: 1,
-              }}
-            >
-              <span style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden" }}>{item.label}</span>
-              <span style={{ marginLeft: "auto", background: "#F1F5F9", color: "#94A3B8", fontSize: 10, padding: "1px 7px", borderRadius: 20, flexShrink: 0 }}>
-                {item.badge}
-              </span>
-            </Link>
-          ))}
-        </div>
-
       </div>
 
       {/* Footer */}
-      <div style={{ padding: "10px 8px", borderTop: "1px solid #F1F5F9" }}>
-        <Link
-          href="/dashboard/settings"
-          className="flex items-center gap-2 transition-all hover:bg-[#F4F6F9]"
-          style={{ padding: "7px 9px", borderRadius: 7, fontSize: 12.5, color: "#334155", textDecoration: "none", marginBottom: 2 }}
-        >
-          <svg style={{ width: 14, height: 14, opacity: 0.7, flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          Settings
-        </Link>
+      <div ref={ref} style={{ padding: "10px 8px", borderTop: "1px solid #F1F5F9", position: "relative" }}>
 
-        <div className="flex items-center cursor-pointer hover:bg-[#F4F6F9] transition-all" style={{ gap: 9, padding: "7px 9px", borderRadius: 7 }}>
+        {/* Dropdown */}
+        {open && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "calc(100% + 6px)",
+              left: 8,
+              right: 8,
+              background: "#fff",
+              border: "1px solid #E2E8F0",
+              borderRadius: 10,
+              boxShadow: "0 4px 16px rgba(15,23,42,0.10)",
+              overflow: "hidden",
+              zIndex: 50,
+            }}
+          >
+            <Link
+              href="/dashboard/settings"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-[9px] hover:bg-[#F4F6F9] transition-colors"
+              style={{ padding: "9px 13px", fontSize: 12.5, color: "#334155", textDecoration: "none" }}
+            >
+              <svg style={{ width: 14, height: 14, opacity: 0.6, flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Settings
+            </Link>
+            <div style={{ height: 1, background: "#F1F5F9", margin: "0 10px" }} />
+            <button
+              onClick={() => { setOpen(false); signOut({ callbackUrl: "/" }); }}
+              className="flex items-center gap-[9px] hover:bg-[#FFF1F2] w-full transition-colors"
+              style={{ padding: "9px 13px", fontSize: 12.5, color: "#DC2626", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+            >
+              <svg style={{ width: 14, height: 14, flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Log out
+            </button>
+          </div>
+        )}
+
+        {/* Profile button */}
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="flex items-center w-full hover:bg-[#F4F6F9] transition-all"
+          style={{ gap: 9, padding: "7px 9px", borderRadius: 7, background: open ? "#F4F6F9" : "transparent", border: "none", cursor: "pointer", textAlign: "left" }}
+        >
           <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#4F46E5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
             B
           </div>
-          <div style={{ minWidth: 0 }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: 12.5, fontWeight: 600, color: "#0F172A", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Your Business</div>
             <div style={{ fontSize: 11, color: "#94A3B8" }}>Free Plan</div>
           </div>
-        </div>
+          <svg
+            style={{ width: 13, height: 13, color: "#94A3B8", flexShrink: 0, transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.15s" }}
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
+
       </div>
     </aside>
   );
